@@ -1,0 +1,112 @@
+.app-menu{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #1E1E2A;
+  transition: width .3s;
+  position: relative;
+  .userinfo{
+    border-bottom: 2px solid #000;
+    height: 208px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    .title{
+      color: #fff;
+      font-size: 16px;
+      margin-bottom: 24px;
+    }
+    .info-wrap{
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+    .name {
+      color: #ddd;
+      margin-top: 4px;
+      font-size: 14px;
+    }
+    .right-info{
+      color: #ddd;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      margin-left: 20px;
+      .lang{
+        margin: 10px 0 10px 0;
+      }
+      .lang_ico{
+        color: #1D8AF7;
+        margin-left: 4px;
+        cursor: pointer;
+      }
+      .logout{
+        cursor: pointer;
+        color: #1D8AF7;
+        transform: scale(1.1);
+      }
+    }
+    // display: flex;
+    // justify-content: center;
+    // align-items: center;
+    // overflow: hidden;
+    // .ant-avatar{
+    //   background: #fff;
+    //   margin-right: 8px;
+    //   margin-left: 12px;
+    // }
+    // .name{
+    //   color: #1D8AF7;
+    //   font-size: 14px;
+    //   overflow: hidden;
+    //   text-overflow: ellipsis;
+    //   white-space: nowrap;
+    // }
+  }
+  .menu-wrap{
+    width: 100%;
+    height: calc(~'100% - 210px');
+    position: relative;
+    .ant-menu-dark{
+      background: #1E1E2A;
+      height: 100%;
+      .ant-menu-inline.ant-menu-sub{
+        background: #2f2f36;
+      }
+    }
+    .menu-to-left{
+      position: absolute;
+      right: -26px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: transparent;
+      border-radius: 2px;
+      transition: all 0.3s;
+      overflow: hidden;
+      cursor: pointer;
+      svg{
+        font-size: 26px;
+      }
+    }
+    &:hover{
+      .menu-to-left{
+        right: 0;
+        color: #1D8AF7;
+      }
+    }
+  }
+  .menu-to-right{
+    position: absolute;
+    border-radius: 2px;
+    color: #1D8AF7;
+    right: -26px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 99;
+    svg{
+      font-size: 26px;
+    }
+  }
+}

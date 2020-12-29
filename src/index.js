@@ -1,13 +1,20 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import './style/common.less'
+import 'antd/dist/antd.css' // 暗黑主题
+// import 'antd/dist/antd.compact.css' // 紧凑主题
+import './styles/common.less'
 import App from './App'
+import { BrowserRouter } from 'react-router-dom'
 import reportWebVitals from './reportWebVitals'
 
+// 只有通过Route组件渲染的组件，才能在this.props上找到history对象
+// 如果希望没有被Router包裹的组件也能访问history对象
+// 可以使用withRouter包裹：export default withRouter(AppHeader)
+
 ReactDOM.render(
-  <React.StrictMode>
+  <BrowserRouter>
     <App />
-  </React.StrictMode>,
+  </BrowserRouter>,
   document.getElementById('root')
 )
 
