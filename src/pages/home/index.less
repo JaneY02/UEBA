@@ -1,0 +1,28 @@
+@import '../../styles/vars.less';
+@blockGutter: 8px;
+
+.home{
+  height: 100%;
+  overflow: auto;
+  padding: @blockGutter @blockGutter 0 @blockGutter;
+  background: #000;
+  .total-card{
+    background-color: #1E1E2A;
+    color: rgba(255, 255, 255, 0.85);
+    .antd-pro-charts-chart-card-chartCard .antd-pro-charts-chart-card-meta {
+      color: rgba(255, 255, 255, 0.45);
+    }
+    .antd-pro-charts-chart-card-chartCard .antd-pro-charts-chart-card-total {
+      color:  rgba(255, 255, 255, 0.85);
+    }
+    .antd-pro-charts-field-field .antd-pro-charts-field-number {
+      color:  rgba(255, 255, 255, 0.85);
+    }
+    .antd-pro-charts-chart-card-chartCard .antd-pro-charts-chart-card-footer {
+      border-top-color: #666;
+    }
+  }
+  .card-refresh-icon{
+    color: @primaryColor;
+  }
+}

@@ -4,16 +4,22 @@ import { navs, navsIcon } from '../../router/navs'
 import './index.less'
 import { DoubleLeftOutlined, DoubleRightOutlined, PoweroffOutlined, SwapOutlined } from '@ant-design/icons'
 import { mainRoutes } from '../../router'
+import { connect } from 'react-redux'
+import { MENUCOLLAPSE } from '../../actions'
 
 class AppMenu extends Component {
   state = {
-    currentNav: '', // 当前菜单选中项
-    currentOpenNav: '', // 当前一级菜单展开项
     menuWidth: '240px',
-    userName: 'Potato_Jane',
-    noticeNum: 7
+    userName: '',
+    noticeNum: 0,
+    currentNav: '', // 当前菜单选中项
+    currentOpenNav: '' // 当前一级菜单展开项
   }
   componentDidMount () {
+    this.setState({
+      userName: 'Potato_Jane',
+      noticeNum: (Math.random() * 50).toFixed(0)
+    })
     let is404 = this.judge404()
     if (!is404) {
       this.goRedirect()
@@ -51,9 +57,11 @@ class AppMenu extends Component {
     })
   }
   menuToLeft = () => {
+    this.props.menuCollapseDispatch(false)
     this.setState({ menuWidth: 0 })
   }
   menuToRight = () => {
+    this.props.menuCollapseDispatch(true)
     this.setState({ menuWidth: '240px' })
   }
   clickNav = e => {
@@ -68,7 +76,7 @@ class AppMenu extends Component {
   }
   /* 切换多语言 */
   changeLang = () => {
-
+    console.log('多语言未实现')
   }
   /* 退出 */
   logout = () => {
@@ -82,20 +90,20 @@ class AppMenu extends Component {
     })
   }
   render () {
-    let { menuWidth, currentNav, currentOpenNav, userName, noticeNum } = this.state
+    let { menuWidth, userName, noticeNum, currentNav, currentOpenNav } = this.state
     return (
       <div className="app-menu" style={{width: menuWidth}}>
         <div className="userinfo">
           <h3 className="title">用户实体行为分析</h3>
           <div className="info-wrap">
             <div className="flex-column-center">
-              <Badge count={noticeNum}>
+              <Badge count={noticeNum} className="dark-badge">
                 <Avatar style={{background: '#efefef'}} shape="square" size={78} src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"></Avatar>
               </Badge>
               <h5 className="name">{userName}</h5>
             </div>
             <div className="right-info">
-              <Tag color="green">普通员工</Tag>
+              <Tag color="green" className="dark-tag">普通员工</Tag>
               <span className="lang">
                 中文
                 <Popconfirm
@@ -155,4 +163,11 @@ class AppMenu extends Component {
   }
 }
 
-export default AppMenu
+const mapStateToProps = () => { return {} }
+const mapDispatchToProps = dispatch => {
+  return {
+    menuCollapseDispatch: value => dispatch({type: MENUCOLLAPSE, value})
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(AppMenu)

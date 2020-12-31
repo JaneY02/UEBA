@@ -1,9 +1,9 @@
-import Login from './../pages/login'
-import Main from './../pages/main'
-import Home from './../pages/home'
-import UserInfo from './../pages/user-info'
-// import UserInfoAdd from './../pages/user-info/add'
-import NotFound from './../pages/404'
+import asyncComponent from './asyncComponent'
+
+const Login =  asyncComponent(() => import(/* webpackChunkName: 'login' */ './../pages/login'))
+const Main =  asyncComponent(() => import(/* webpackChunkName: 'app-main' */ './../pages/main'))
+const Home =  asyncComponent(() => import(/* webpackChunkName: 'home' */ './../pages/home'))
+const UserInfo =  asyncComponent(() => import(/* webpackChunkName: 'user-info' */ './../pages/user-info'))
 
 const mainRoutes = [
   /* 总览 */
@@ -30,19 +30,6 @@ const mainRoutes = [
     openMenuCode: '/ueba/user',
     breadcrum: ['用户管理', '人员管理']
   },
-  /* 人员管理--添加 */
-  // {
-  //   path: '/ueba/user/info/add',
-  //   component: UserInfoAdd,
-  //   openMenuCode: '/ueba/user',
-  //   menuCode: '/ueba/user/info',
-  //   breadcrum: ['用户管理', '人员管理', '添加人员']
-  // },
-  /* 404页面 */
-  {
-    path: '/404',
-    component: NotFound
-  }
 ]
 
 const appRoutes = [
