@@ -1,5 +1,6 @@
 import http from '../http'
 import moment from 'moment'
+import MockJS from 'mockjs'
 const beginDay = new Date().getTime()
 
 const HomeUnusualEventTrend = () => {
@@ -16,12 +17,24 @@ const HomeUnusualEventTrend = () => {
       data
     })
   })
-  // return http({
-  //   method: 'get',
-  //   url: '/api/unusual/event/trend'
-  // })
+}
+
+const HomeActivedUser = () => {
+  return new Promise((resolve, reject) => {
+    let result = MockJS.mock({
+      'code': 200,
+      'data|40': [{
+        'id|+1': 1,
+        'name|1': ['@name', '@cname'],
+        'userType|1': ['实习生', '试用期', '已转正', '离职', '管理层'],
+        'activeNum': '@integer(100, 200)'
+      }]
+    })
+    resolve(result)
+  })
 }
 
 export default {
-  HomeUnusualEventTrend
+  HomeUnusualEventTrend, // 异常事件
+  HomeActivedUser // 活跃用户
 }

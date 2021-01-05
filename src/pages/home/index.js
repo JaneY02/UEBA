@@ -8,6 +8,7 @@ import moment from 'moment'
 import './index.less'
 import API from '../../api/modules/home'
 import ChartLineBar from '../../components/chart-line-bar'
+import ChartBubble from '../../components/chart-bubble'
 class Home extends Component {
   state = {
     totalInfo: {
@@ -30,9 +31,9 @@ class Home extends Component {
       safeDayRatioTrend: ''
     },
     unusualEventData: {},
+    activedUsers: [],
     // riskUserRank: [],
     // lastAnomaly: [],
-    // activeUsers: [],
     // riskEventRank: [],
     // assetRank: [],
     // allClassify: [],
@@ -41,9 +42,10 @@ class Home extends Component {
   componentDidMount () {
     this.getTotalNum()
     this.getUnusualTrend()
+    this.getActivedUser()
+
     this.getRiskUserRank()
     this.getLastAnomaly()
-    this.getActiveUser()
     this.getRiskEventRank()
     this.getAssetRank()
     this.getClassify()
@@ -101,6 +103,24 @@ class Home extends Component {
       }
     })
   }
+  /* 获取活跃用户 */
+  getActivedUser = () => {
+    API.HomeActivedUser().then(res => {
+      let { code, data } = res
+      if (code === 200) {
+        this.setState({ activedUsers: data || [] })
+      }
+    })
+  }
+  /* 获取最新风险事件 */
+  getLastAnomaly = () => {
+    // API.HomeRiskLastAnomaly().then(res => {
+    //   let { code, data } = res
+    //   if (code === 200) {
+    //     this.setState({ lastAnomaly: data || [] })
+    //   }
+    // })
+  }
   /* 获取高危用户排名数据 */
   getRiskUserRank = () => {
     // this.setState({ riskUserRank: this.setArrFullofLen([], 10) })
@@ -112,25 +132,9 @@ class Home extends Component {
     //   }
     // })
   }
-  /* 获取最新风险事件 */
-  getLastAnomaly = () => {
-    // API.HomeRiskLastAnomaly().then(res => {
-    //   let { code, data } = res
-    //   if (code === 200) {
-    //     this.setState({ lastAnomaly: data || [] })
-    //   }
-    // })
-  }
   
-  /* 获取活跃用户 */
-  getActiveUser = () => {
-    // API.HomeActiveUser().then(res => {
-    //   let { code, data } = res
-    //   if (code === 200) {
-    //     this.setState({ activeUsers: data || [] })
-    //   }
-    // })
-  }
+  
+  
   /* 风险事件Top10 */
   getRiskEventRank = () => {
     // this.setState({ riskEventRank: this.setArrFullofLen([], 10) })
@@ -196,7 +200,7 @@ class Home extends Component {
     // window.location.reload()
   }
   render () {
-    let { totalInfo, unusualEventData } = this.state
+    let { totalInfo, unusualEventData, activedUsers } = this.state
     const upIcon = <CaretUpOutlined className="marginLeft2" style={{color: '#52c41a', transform: 'scale(.8)'}} />
     const downIcon = <CaretDownOutlined className="marginLeft2" style={{color: '#f5222d', transform: 'scale(.8)'}} />
     return (
@@ -295,13 +299,27 @@ class Home extends Component {
             </ChartCard>
           </Col>
         </Row>
-        <Card size="small" extra={<ReloadOutlined onClick={() => this.getUnusualTrend()} className="card-refresh-icon" />} title="异常事件总数"  bordered={false} className="marginBottom8 dark-card">
+        <Card size="small" extra={<ReloadOutlined onClick={() => this.getUnusualTrend()} className="card-refresh-icon" />} title="异常事件"  bordered={false} className="marginBottom8 dark-card">
           <ChartLineBar
             id="unusualEventId"
             themeMode="dark"
             tooltipLoop={false}
             data={unusualEventData} />
         </Card>
+        <Row gutter={8}>
+          <Col xxl={13} xl={11} lg={24} md={24} sm={24} xs={24}>
+            <Card size="small" extra={<ReloadOutlined onClick={() => this.getActivedUser()} className="card-refresh-icon" />} title="活跃用户" bordered={false} className="marginBottom8 dark-card">
+              <ChartBubble
+                id="activeUserId"
+                data={activedUsers} />
+            </Card>
+          </Col>
+          <Col xxl={11} xl={13} lg={24} md={24} sm={24} xs={24}>
+            <Card size="small" extra={<ReloadOutlined onClick={() => this.getLastAnomaly()} className="card-refresh-icon" />} title="最新风险事件" bordered={false} className="marginBottom8 dark-card">
+
+            </Card>
+          </Col>
+        </Row>
       </div>
     )
   }
