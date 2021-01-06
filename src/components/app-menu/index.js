@@ -6,6 +6,7 @@ import { DoubleLeftOutlined, DoubleRightOutlined, PoweroffOutlined, SwapOutlined
 import { mainRoutes } from '../../router'
 import { connect } from 'react-redux'
 import { MENUCOLLAPSE } from '../../actions'
+import { FILTER_Usertype_Text, FILTER_Usertype_color } from '../../utils/filters'
 
 class AppMenu extends Component {
   state = {
@@ -103,7 +104,7 @@ class AppMenu extends Component {
               <h5 className="name">{userName}</h5>
             </div>
             <div className="right-info">
-              <Tag color="green" className="dark-tag">普通员工</Tag>
+              <Tag color={FILTER_Usertype_color('manager')} className="dark-tag">{FILTER_Usertype_Text('manager')}</Tag>
               <span className="lang">
                 中文
                 <Popconfirm

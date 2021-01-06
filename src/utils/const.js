@@ -1,0 +1,1 @@
+export const CONST_Usertype_color = ['#5AD7D8', '#47CBFF', '#4168FF', '#FF5F45', '#B754F6']

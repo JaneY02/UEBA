@@ -1,15 +1,17 @@
-import { Component, Fragment } from 'react'
-import { Card, Empty, Avatar, Row, Col, Timeline, Button, Tag, Tooltip } from 'antd'
+import { Component } from 'react'
+import { Card, Empty, Avatar, Row, Col, Timeline, Tag, Tooltip } from 'antd'
 import { ChartCard, Field, MiniArea, MiniBar, MiniProgress } from 'ant-design-pro/lib/Charts'
 import Trend from 'ant-design-pro/lib/Trend'
-import { UngroupOutlined, QuestionCircleOutlined, UserOutlined, CaretDownOutlined, CaretUpOutlined, ReloadOutlined, ClockCircleOutlined, WomanOutlined, ManOutlined, LaptopOutlined, EnvironmentOutlined, WarningOutlined } from '@ant-design/icons'
+import { QuestionCircleOutlined, UserOutlined, CaretDownOutlined, CaretUpOutlined, ReloadOutlined, WomanOutlined, ManOutlined, LaptopOutlined, EnvironmentOutlined, WarningOutlined } from '@ant-design/icons'
 import numeral from 'numeral'
 import moment from 'moment'
 import './index.less'
 import API from '../../api/modules/home'
 import ChartLineBar from '../../components/chart-line-bar'
 import ChartBubble from '../../components/chart-bubble'
+import { FILTER_Usertype_Text, FILTER_Usertype_color } from '../../utils/filters'
 class Home extends Component {
+  riskTopHeight = '540px'
   state = {
     totalInfo: {
       userWeekRatioTrend: '',
@@ -32,10 +34,10 @@ class Home extends Component {
     },
     unusualEventData: {},
     activedUsers: [],
-    // riskUserRank: [],
-    // lastAnomaly: [],
-    // riskEventRank: [],
-    // assetRank: [],
+    lastAnomaly: [],
+    riskAssetTop: [],
+    riskUserTop: [],
+    riskEventTop: [],
     // allClassify: [],
     // bubbleLegendData: []
   }
@@ -43,12 +45,10 @@ class Home extends Component {
     this.getTotalNum()
     this.getUnusualTrend()
     this.getActivedUser()
-
-    this.getRiskUserRank()
     this.getLastAnomaly()
-    this.getRiskEventRank()
-    this.getAssetRank()
-    this.getClassify()
+    this.getRiskAssetTop()
+    this.getRiskUserTop()
+    this.getRiskEventTop()
   }
   /* 获取头部总数 */
   getTotalNum = () => {
@@ -114,93 +114,63 @@ class Home extends Component {
   }
   /* 获取最新风险事件 */
   getLastAnomaly = () => {
-    // API.HomeRiskLastAnomaly().then(res => {
-    //   let { code, data } = res
-    //   if (code === 200) {
-    //     this.setState({ lastAnomaly: data || [] })
-    //   }
-    // })
-  }
-  /* 获取高危用户排名数据 */
-  getRiskUserRank = () => {
-    // this.setState({ riskUserRank: this.setArrFullofLen([], 10) })
-    // API.HomeRiskUserRank().then(res => {
-    //   let { code, data } = res
-    //   if (code === 200) {
-    //     let newUserRank = this.setArrFullofLen(data, 10)
-    //     this.setState({ riskUserRank: newUserRank })
-    //   }
-    // })
-  }
-  
-  
-  
-  /* 风险事件Top10 */
-  getRiskEventRank = () => {
-    // this.setState({ riskEventRank: this.setArrFullofLen([], 10) })
-    // API.HomeRiskEventRank().then(res => {
-    //   let { code, data } = res
-    //   if (code === 200) {
-    //     let newRiskEventRank = this.setArrFullofLen(data, 10)
-    //     newRiskEventRank.map(item => item.per = 100 * (item.risknum / newRiskEventRank[0].risknum).toFixed(2))
-    //     this.setState({ riskEventRank: newRiskEventRank })
-    //   }
-    // })
+    API.HomeLastAnomaly().then(res => {
+      let { code, data } = res
+      if (code === 200) {
+        this.setState({ lastAnomaly: data || [] })
+      }
+    })
   }
   /* 高危资产Top10 */
-  getAssetRank = () => {
-    // this.setState({ assetRank: this.setArrFullofLen([], 10) })
-    // API.HomeRiskAsset().then(res => {
-    //   let { code, data } = res
-    //   if (code === 200) {
-    //     let newAssetRank = this.setArrFullofLen(data, 10)
-    //     newAssetRank.map(item => item.per = 100 * (item.risknum / newAssetRank[0].risknum).toFixed(2))
-    //     this.setState({ assetRank: newAssetRank })
-    //   }
-    // })
+  getRiskAssetTop = () => {
+    this.setState({ riskAssetTop: this.setArrFullofLen([], 10) })
+    API.HomeRiskAssetTop().then(res => {
+      let { code, data } = res
+      if (code === 200) {
+        let newAssetRank = this.setArrFullofLen(data, 10)
+        newAssetRank.map(item => item.percent = 100 * (item.value / item.total).toFixed(2))
+        this.setState({ riskAssetTop: newAssetRank.sort((a, b) => b.percent - a.percent) })
+      }
+    })
   }
-  /* 获取所有活跃用户分类 */
-  getClassify = () => {
-    // API.ActiveUserClassify().then(res => {
-    //   let { code, data } = res
-    //   if (code === 200) {
-    //     let legendData = data.map(cate => cate.name)
-    //     this.setState({ 
-    //       allClassify: data,
-    //       bubbleLegendData: legendData
-    //      })
-    //   }
-    // })
+  /* 风险事件Top10 */
+  getRiskEventTop = () => {
+    this.setState({ riskEventTop: this.setArrFullofLen([], 10) })
+    API.HomeRiskEventTop().then(res => {
+      let { code, data } = res
+      if (code === 200) {
+        let newRiskEventRank = this.setArrFullofLen(data, 10)
+        newRiskEventRank.map(item => item.percent = 100 * (item.value / item.total).toFixed(2))
+        this.setState({ riskEventTop: newRiskEventRank.sort((a, b) => b.percent - a.percent) })
+      }
+    })
+  }
+  /* 获取高危用户排名数据 */
+  getRiskUserTop = () => {
+    this.setState({ riskUserTop: this.setArrFullofLen([], 10) })
+    API.HomeRiskUserTop().then(res => {
+      let { code, data } = res
+      if (code === 200) {
+        let newUserRank = this.setArrFullofLen(data, 10)
+        newUserRank.map(item => item.percent = 100 * (item.value / item.total).toFixed(2))
+        this.setState({ riskUserTop: newUserRank.sort((a, b) => b.percent - a.percent) })
+      }
+    })
   }
   /* 设置数组为满值，长度不够用缺省补充 */
   setArrFullofLen = (data, len) => {
-    // let originalLen = (data && data.length) ? data.length : 0
-    // let result = data
-    // if (originalLen < len) {
-    //   for(let i = originalLen; i < len; i++) {
-    //     result.push({default: true})
-    //   }
-    // }
-    // return result
-  }
-  goUserInfoDetail = personId => {
-    // this.props.history.push({
-    //   pathname: '/ueba/user/info/edit',
-    //   state: { personId }
-    // })
-    // // 刷新菜单栏
-    // window.location.reload()
-  }
-  goBehaviorActDetail = personId => {
-    // this.props.history.push({
-    //   pathname: '/ueba/behavior/act/detail',
-    //   state: { personId }
-    // })
-    // // 刷新菜单栏
-    // window.location.reload()
+    let originalLen = (data && data.length) ? data.length : 0
+    let result = data
+    if (originalLen < len) {
+      for(let i = originalLen; i < len; i++) {
+        result.push({default: true})
+      }
+    }
+    return result
   }
   render () {
-    let { totalInfo, unusualEventData, activedUsers } = this.state
+    let { totalInfo, unusualEventData, activedUsers, lastAnomaly, riskAssetTop, riskUserTop, riskEventTop } = this.state
+    console.log(111, riskAssetTop)
     const upIcon = <CaretUpOutlined className="marginLeft2" style={{color: '#52c41a', transform: 'scale(.8)'}} />
     const downIcon = <CaretDownOutlined className="marginLeft2" style={{color: '#f5222d', transform: 'scale(.8)'}} />
     return (
@@ -209,7 +179,7 @@ class Home extends Component {
           <Col xxl={6} xl={6} lg={12} md={24} sm={24} xs={24} className="marginBottom8">
             <ChartCard
               bordered={false}
-              title="高危用户"
+              title="高危用户量"
               action={
                 <Tooltip title="指标说明">
                   <QuestionCircleOutlined />
@@ -236,7 +206,7 @@ class Home extends Component {
           <Col xxl={6} xl={6} lg={12} md={24} sm={24} xs={24} className="marginBottom8">
             <ChartCard
               bordered={false}
-              title="高危资产"
+              title="高危资产量"
               action={
                 <Tooltip title="指标说明">
                   <QuestionCircleOutlined />
@@ -316,7 +286,141 @@ class Home extends Component {
           </Col>
           <Col xxl={11} xl={13} lg={24} md={24} sm={24} xs={24}>
             <Card size="small" extra={<ReloadOutlined onClick={() => this.getLastAnomaly()} className="card-refresh-icon" />} title="最新风险事件" bordered={false} className="marginBottom8 dark-card">
-
+              <div style={{height: '400px'}}>
+                {lastAnomaly.length ? (
+                  <Timeline mode="left" className="dark-timeline">
+                    {
+                      lastAnomaly.map((item, index) => (
+                        <Timeline.Item key={index}>
+                          <span className="text-ellipsis">{item.time} {item.desc}</span>
+                        </Timeline.Item>
+                      ))
+                    }
+                  </Timeline>
+                ) : (
+                  <Empty className="dark-empty page-empty" image={Empty.PRESENTED_IMAGE_SIMPLE} description={false} />
+                )}
+              </div>
+            </Card>
+          </Col>
+          <Col xxl={8} xl={8} lg={24} md={24} sm={24} xs={24}>
+            <Card size="small" extra={<ReloadOutlined onClick={() => this.getRiskAssetTop()} className="card-refresh-icon" />} title="高危资产 Top" bordered={false} className="marginBottom8 dark-card">
+              <div style={{height: this.riskTopHeight}} className="high-risk-wrap">
+                {
+                  riskAssetTop.map((item, index) => {
+                    if (item.default) {
+                      return (
+                        <div className="high-risk-top default" key={index}>
+                          <div className="top">
+                            <span className="name"></span>
+                            <span className="value"></span>
+                          </div>
+                          <span className="bar"></span>
+                        </div>
+                      )
+                    } else {
+                      return (
+                        <div key={index}>
+                          <div className="high-risk-top" key={index}>
+                            <div className="top">
+                              <span className="name">{item.name}</span>
+                              <span className="value">{numeral(item.value).format('0,0')}</span>
+                            </div>
+                            <span className="bar" style={{width: item.percent + '%'}}></span>
+                          </div>
+                        </div>
+                      )
+                    }
+                  })
+                }
+              </div>
+            </Card>
+          </Col>
+          <Col xxl={8} xl={8} lg={24} md={24} sm={24} xs={24}>
+            <Card size="small" extra={<ReloadOutlined onClick={() => this.getRiskEventTop()} className="card-refresh-icon" />} title="风险事件 Top" bordered={false} className="marginBottom8 dark-card">
+              <div style={{height: this.riskTopHeight}} className="high-risk-wrap">
+                {
+                  riskEventTop.map((item, index) => {
+                    if (item.default) {
+                      return (
+                        <div className="high-risk-top default" key={index}>
+                          <div className="top">
+                            <span className="name"></span>
+                            <span className="value"></span>
+                          </div>
+                          <span className="bar"></span>
+                        </div>
+                      )
+                    } else {
+                      return (
+                        <div key={index}>
+                          <div className="high-risk-top" key={index}>
+                            <div className="top">
+                              <span className="name">{item.name}</span>
+                              <span className="value">{numeral(item.value).format('0,0')}</span>
+                            </div>
+                            <span className="bar" style={{width: item.percent + '%'}}></span>
+                          </div>
+                        </div>
+                      )
+                    }
+                  })
+                }
+              </div>
+            </Card>
+          </Col>
+          <Col xxl={8} xl={8} lg={24} md={24} sm={24} xs={24}>
+            <Card size="small" extra={<ReloadOutlined onClick={() => this.getRiskUserTop()} className="card-refresh-icon" />} title="高危用户 Top" bordered={false} className="marginBottom8 dark-card">
+              <div style={{height: this.riskTopHeight}} className="high-risk-user-wrap">
+                {
+                  riskUserTop.map((item, index) => {
+                    if (item.default) {
+                      return (
+                        <div className="high-risk-top-user default" key={index}>
+                          <Avatar icon={<UserOutlined />} className="dark-avatar" />
+                          <div className="user-info">
+                            <div className="info-top">
+                              <span className="name"></span>
+                              <span className="score"></span>
+                            </div>
+                            <div className="info-other"></div>
+                          </div>
+                        </div>
+                      )
+                    } else {
+                      return (
+                        <div className="high-risk-top-user" key={index}>
+                          <Avatar src={item.photo} />
+                          <div className="user-info">
+                            <div className="info-top">
+                              <div>
+                                <Tag color={FILTER_Usertype_color(item.userType)} className="dark-tag">{FILTER_Usertype_Text(item.userType)}</Tag>
+                                <span className="name">{item.name}</span>
+                              </div>
+                              <span className="score">{numeral(item.score).format('0,0')}</span>
+                            </div>
+                            <div className="info-other">
+                              {item.gender * 1 === 1 ? (<WomanOutlined title="女" className="icon-female-color" />) : (<ManOutlined title="男" className="icon-male-color" />)}
+                              <span className="other">
+                                <WarningOutlined title="事件总数" />
+                                {numeral(item.RiskEvent).format('0,0') || '-'}
+                              </span>
+                              <span className="other">
+                                <LaptopOutlined title="用户IP" />
+                                {item.ip || '-'}
+                              </span>
+                              <span className="other">
+                                <EnvironmentOutlined title="工作地点" />
+                                {item.region || '-'}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      )
+                    }
+                  })
+                }
+              </div>
             </Card>
           </Col>
         </Row>

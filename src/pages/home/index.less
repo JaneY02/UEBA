@@ -1,5 +1,8 @@
 @import '../../styles/vars.less';
 @blockGutter: 8px;
+@defaultTopBarH: 3px;
+@defaultTopTextH: 8px;
+@defaultTopBg: #27293D;
 
 .home{
   height: 100%;
@@ -24,5 +27,111 @@
   }
   .card-refresh-icon{
     color: @primaryColor;
+  }
+}
+.high-risk-wrap{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.high-risk-top{
+  display: flex;
+  flex-direction: column;
+  .top{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .name{
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.65);
+    }
+    .value{
+      font-size: 16px;
+      font-weight: bold;
+      color: rgba(255, 255, 255, 0.85);
+    }
+  }
+  .bar{
+    display: inline-block;
+    height: @defaultTopBarH;
+    background: linear-gradient(to right, rgba(24, 144, 255, 1), rgba(24, 144, 255, .3));
+    border-radius: 2px;
+  }
+  &.default{
+    .top{
+      margin-bottom: 6px;
+      .name{
+        width: 80px;
+        height: @defaultTopTextH;
+        background: @defaultTopBg;
+      }
+      .value{
+        width: 50px;
+        height: @defaultTopTextH;
+        background: @defaultTopBg;
+      }
+    }
+    .bar{
+      width: 100%;
+      height: @defaultTopBarH;
+      background: @defaultTopBg;
+    }
+  }
+}
+.high-risk-user-wrap{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.high-risk-top-user{
+  display: flex;
+  color: rgba(255, 255, 255, 0.85);
+  .user-info{
+    width: calc(~'100% - 32px');
+    padding: 0 0 8px 12px;
+  }
+  .info-top{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .name{
+      font-weight: bold;
+      color: rgba(255, 255, 255, 0.65);
+    }
+    .score{
+      font-size: 16px;
+      color: rgba(255, 255, 255, 0.85);
+      font-weight: bold;
+      cursor: pointer;
+    }
+  }
+  .info-other{
+    .other{
+      display: inline-block;
+      padding: 0 6px;
+      & > .anticon{
+        margin-right: 2px;
+      }
+    }
+  }
+  &.default{
+    .info-top{
+      margin-bottom: 4px;
+      .name{
+        width: 100px;
+        height: @defaultTopTextH;
+        background: @defaultTopBg;
+      }
+      .score{
+        width: 50px;
+        height: @defaultTopTextH;
+        background: @defaultTopBg;
+      }
+    }
+    .info-other{
+      width: 100%;
+      height: @defaultTopBarH;
+      background: @defaultTopBg;
+    }
   }
 }

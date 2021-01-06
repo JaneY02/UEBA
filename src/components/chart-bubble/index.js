@@ -4,8 +4,8 @@ import echarts from 'echarts/lib/echarts'
 import 'echarts/lib/chart/graph'
 import 'echarts/lib/component/tooltip'
 import 'echarts/lib/component/legend'
-
-const colors = ['#4168FF', '#47CBFF', '#FF7A33', '#45DE7F', '#FFAC34']
+import store from '../../store'
+import { FILTER_Usertype_Text, FILTER_Usertype_color } from '../../utils/filters'
 
 class ChartBubble extends Component {
   echartsObj = null
@@ -14,6 +14,11 @@ class ChartBubble extends Component {
   }
   componentDidMount () {
     window.addEventListener('resize', this.chartResize)
+    store.subscribe(() => {
+      // store.subscribe用来监听store中state
+      // 菜单动画有300ms，所以延迟器时长必须大于等于这个时间
+      this.chartResize()
+    })
   }
   chartResize = () => {
     setTimeout(() => {
@@ -32,9 +37,11 @@ class ChartBubble extends Component {
   componentDidUpdate () {
     let { bubbleData } = this.state
     let { id } = this.props
-    let allUserType = bubbleData.map(item => item.userType)
-    allUserType = [...new Set(allUserType)]
-    let categories = allUserType.map(item => {
+    let allUserType = [...new Set(bubbleData.map(item => item.userType))] // 过滤掉重复的userType
+    let allUserTypeText = allUserType.map(item => FILTER_Usertype_Text(item)) // 过滤出人员类型中文名称
+    let legendData = allUserTypeText
+    let legendColor = allUserType.map(item => FILTER_Usertype_color(item))
+    let categories = allUserTypeText.map(item => {
       return { name: item }
     })
     if (bubbleData.length) {
@@ -50,16 +57,16 @@ class ChartBubble extends Component {
           },
           formatter: (param) => {
             let { marker } = param
-            let { name, category, value } = param.data
+            let { name, category, value = 0 } = param.data
             let result = '<p>'+name+'</p>'
             result += '<p>'+marker+'用户类型：'+category+'</p>'
-            result += '<p>'+'活跃次数：'+value+'</p>'
+            result += '<p>活跃次数：'+value+'</p>'
             return result
           }
         },
         animationDuration: 3000,
         animationEasingUpdate: 'quinticInOut',
-        color: colors,
+        color: legendColor,
         legend: {
           show: true,
           orient: 'vertical',
@@ -70,13 +77,13 @@ class ChartBubble extends Component {
           textStyle: {
             color: 'rgba(255, 255, 255, 0.65)'
           },
-          data: allUserType
+          data: legendData
         },
         series: [{
           type: 'graph',
           layout: 'force',
           force: {
-            repulsion: 70, // 节点之间的斥力因子
+            repulsion: 100, // 节点之间的斥力因子
             edgeLength: 8
           },
           roam: true, // 鼠标缩放
@@ -94,13 +101,14 @@ class ChartBubble extends Component {
         let tempData = {
           name: item.name,
           value: item.activeNum,
-          category: item.userType,
+          category: FILTER_Usertype_Text(item.userType),
           symbolSize: bubbleData.length > 10 ? item.activeNum * 0.2 : item.activeNum * 0.4,
           draggable: true,
           itemStyle: {
             normal: {
               shadowBlur: 6,
-              shadowColor: colors[allUserType.findIndex(type => type === item.userType)]
+              color: FILTER_Usertype_color(item.userType),
+              shadowColor: FILTER_Usertype_color(item.userType)
             }
           }
         }
@@ -112,7 +120,7 @@ class ChartBubble extends Component {
   // 当props发生改变--end
   render () {
     let { bubbleData } = this.state
-    let { id, height = '380px' } = this.props
+    let { id, height = '400px' } = this.props
     return (
       <div style={{height: height}}>
         { bubbleData && bubbleData.length ? (
